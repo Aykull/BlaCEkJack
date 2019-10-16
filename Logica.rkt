@@ -1,20 +1,35 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-advanced-reader.ss" "lang")((modname Logica) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
+#lang racket
+
 ;;Función Principal
 (define (bCEj X)
-  (auxbCEj X '(Ah 1h 2h 3h 4h 5h 6h 7h 8h 9h 10h Jh Qh Kh
-            Ad 1d 2d 3d 4d 5d 6d 7d 8d 9d 10d Jd Qd Kd
-            Ac 1c 2c 3c 4c 5c 6c 7c 8c 9c 10c Jc Qc Kc
-            As 1s 2s 3s 4s 5s 6s 7s 8s 9s 10s Js Qs Ks)))
+  (aux1bCEj X '(Ah 1h 2h 3h 4h 5h 6h 7h 8h 9h 10h Jh Qh Kh
+               Ad 1d 2d 3d 4d 5d 6d 7d 8d 9d 10d Jd Qd Kd
+               Ac 1c 2c 3c 4c 5c 6c 7c 8c 9c 10c Jc Qc Kc
+               As 1s 2s 3s 4s 5s 6s 7s 8s 9s 10s Js Qs Ks)))
 
-;;Funcion Auxiliar Principal, la cual construye la lista
-;;de jugadores con sus respectivas cartas
-(define (auxbCEj X deck)
+;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
+;;R1 (Numero Random 1), R2 (Numero Random 2)
+(define (aux1bCEj X deck)
+  (aux2bCEj X (random (lenList deck)) (random (lenList deck)) deck))
+
+  
+;;Funcion Auxiliar 2 Principal, la cual construye la lista de jugadores con sus respectivas cartas
+(define (aux2bCEj X R1 R2 deck)
   (cond ((= X -1) '())
+        ;;Compara si las dos cartas son iguales
+        ((= R1 R2) (aux2bCEj X (random (lenList deck)) (random (lenList deck)) deck))
     ;;retorna una lista con los jugadores y el diler
-    (else (cons (list (cartasAleatorias deck (random (lenList deck)) 0) (cartasAleatorias deck (random (lenList deck)) 0))  (auxbCEj (- X 1) deck)))))
+    (else (cons (list (cartasAleatorias deck R1 0) (cartasAleatorias deck R2 0))  (aux2bCEj (- X 1) R1 R2 (modificarDeck R1 R2 deck))))))
 
+;;Funcion para modificar el deck y que no se repitan las cartas
+(define (modificarDeck pos1 pos2 deck)
+  (cond ((null? deck) '())
+        ((and (< pos1 0) (< pos2 0)) '())
+        ((= pos1 0) (cdr deck))
+        ((= pos2 0) (cdr deck))
+        (else (append (list (car deck)) (modificarDeck (- pos1 1) (- 1 pos2) (cdr deck))))))
+     
+     
 ;;Función Carta Aleatoria
 (define (cartasAleatorias deck numRandom contRandom)
   (cond
