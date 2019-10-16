@@ -1,3 +1,16 @@
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-advanced-reader.ss" "lang")((modname GUI) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
+#lang racket/gui
+(provide mostrarGUI)
+
+(define frame (new frame%
+                   [label "BlaCEkJack"]
+                   [width 800]
+                   [height 800]))
+(new canvas% [parent frame]
+             [paint-callback
+              (lambda (canvas dc)
+                (send dc set-scale 3 3)
+                (send dc set-text-foreground "blue")
+                (send dc draw-text "Aykull" 0 0))])
+
+(define (mostrarGUI)
+  (send frame show #t))
