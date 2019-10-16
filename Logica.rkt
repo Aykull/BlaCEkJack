@@ -10,24 +10,24 @@
 ;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
 ;;R1 (Numero Random 1), R2 (Numero Random 2)
 (define (aux1bCEj X deck)
-  (aux2bCEj X (random (lenList deck)) (random (lenList deck)) deck))
+  (aux2bCEj X (random 52) (random 52) 52 deck))
 
   
 ;;Funcion Auxiliar 2 Principal, la cual construye la lista de jugadores con sus respectivas cartas
-(define (aux2bCEj X R1 R2 deck)
-  (cond ((= X -1) '())
+(define (aux2bCEj X R1 R2 lenDeck deck)
+  (cond ((= X -1) (list deck))
         ;;Compara si las dos cartas son iguales
-        ((= R1 R2) (aux2bCEj X (random (lenList deck)) (random (lenList deck)) deck))
+        ((= R1 R2) (aux2bCEj X (random lenDeck) (random lenDeck) lenDeck deck))
     ;;retorna una lista con los jugadores y el diler
-    (else (cons (list (cartasAleatorias deck R1 0) (cartasAleatorias deck R2 0))  (aux2bCEj (- X 1) R1 R2 (modificarDeck R1 R2 deck))))))
+    (else (cons (list (cartasAleatorias deck R1 0) (cartasAleatorias deck R2 0))  (aux2bCEj (- X 1) (random (- lenDeck 2)) (random (- lenDeck 2)) (- lenDeck 2) (modificarDeck R1 R2 0 0 deck))))))
 
 ;;Funcion para modificar el deck y que no se repitan las cartas
-(define (modificarDeck pos1 pos2 deck)
+(define (modificarDeck pos pos2 cont cont2 deck)
   (cond ((null? deck) '())
-        ((and (< pos1 0) (< pos2 0)) '())
-        ((= pos1 0) (cdr deck))
-        ((= pos2 0) (cdr deck))
-        (else (append (list (car deck)) (modificarDeck (- pos1 1) (- 1 pos2) (cdr deck))))))
+        ((and (= pos cont) (= pos2 cont2)) (cdr deck))
+        ((= pos cont) (modificarDeck pos pos2 (+ cont 1) (+ cont2 1) (cdr deck)))
+        ((= pos2 cont) (modificarDeck pos pos2 (+ cont 1) (+ cont2 1) (cdr deck)))
+        (else (cons (car deck) (modificarDeck pos pos2 (+ cont 1) (+ cont2 1) (cdr deck))))))
      
      
 ;;Función Carta Aleatoria
