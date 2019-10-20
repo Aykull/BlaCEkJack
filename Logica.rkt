@@ -1,5 +1,5 @@
 #lang racket
-(require "GUI.rkt")
+(provide (all-defined-out))
 
 
 ;;Función Principal
@@ -45,4 +45,4 @@
 
              
 
-(bCEj 3)
+;(bCEj 3)
