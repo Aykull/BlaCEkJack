@@ -71,4 +71,4 @@
         (else "Error")))
 
 
-(PedirCarta 1 43 MatrixJuego)
+;(PedirCarta 1 43 MatrixJuego)

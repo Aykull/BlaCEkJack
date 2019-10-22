@@ -86,10 +86,24 @@
 ;Se define un canvas para pintar en el frame y que se muestre el fondo
 (define mycanvas (new bitmap-canvas% [parent frame] [bitmap bg]))
 
+(define msg (new message% [parent frame]
+                          [label "No events so far..."]))
 
+
+(new button% [parent frame]
+             [label "Pedir Carta"]
+             ; Callback procedure for a button click:
+             [callback (lambda (button event)
+                         (send msg set-label "Button click 1"))])
+
+(new button% [parent frame]
+             [label "Plantarme"]
+             ; Callback procedure for a button click:
+             [callback (lambda (button event)
+                         (send msg set-label "Button click 2"))])
 
 (define (mostrarGUI)
   (send frame show #t))
 
+(define t (make-table "Blackjack" 6 3))
 
-(mostrarGUI)
