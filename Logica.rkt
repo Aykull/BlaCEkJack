@@ -27,7 +27,8 @@
 
 ;;Función Principal
 (define (bCEj X)
-  (aux1bCEj X Deck))
+  (cond ((= X 3) (aux1bCEj X Deck))
+        (else "Cantidad de jugadores no permitida")))
 
 
 ;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
@@ -85,22 +86,22 @@
 (define (aux1PedirCarta Jugador numRandom deck)
   (cond ((null? deck) '())
         ((>= numRandom (lenList (car (cddddr deck)))) "Error el random sobrepasa el limite")
-        ((> Jugador 5) "Error J5 No Existe")
-        ((= Jugador 1) (if (equal? (verificar21 (car deck)) #t) 
+        ((> Jugador 5) "Error El Jugador No Existe")
+        ((= Jugador 1) (if (equal? (verificar21 (car deck) 1) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car deck)) (car deck))))
+                           (cons (verificar21 (car deck) 1) (car deck))))
         
-        ((= Jugador 2) (if (equal? (verificar21 (car (cdr deck))) #t) 
+        ((= Jugador 2) (if (equal? (verificar21 (car (cdr deck)) 2) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car (cdr deck))) (car (cdr deck)))))
+                           (cons (verificar21 (car (cdr deck)) 2) (car (cdr deck)))))
         
-        ((= Jugador 3) (if (equal? (verificar21 (car (cddr deck))) #t) 
+        ((= Jugador 3) (if (equal? (verificar21 (car (cddr deck)) 3) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car (cddr deck))) (car (cddr deck)))))
+                           (cons (verificar21 (car (cddr deck)) 3) (car (cddr deck)))))
     
-        ((= Jugador 4) (if (equal? (verificar21 (car (cdddr deck))) #t) 
+        ((= Jugador 4) (if (equal? (verificar21 (car (cdddr deck)) 4) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car (cdddr deck))) (car (cdddr deck)))))
+                           (cons (verificar21 (car (cdddr deck)) 4) (car (cdddr deck)))))
         (else "Error")))
 
 
@@ -108,32 +109,32 @@
 (define (aux2PedirCarta Jugador numRandom deck)
   (cond ((null? deck) '())
         ((>= numRandom (lenList (car (cddddr deck)))) "Error el random sobrepasa el limite")
-        ((> Jugador 5) "Error J5 No Existe")
-        ((= Jugador 1) (if (equal? (verificar21 (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))) #t) 
+        ((> Jugador 5) "Error El Jugador No Existe")
+        ((= Jugador 1) (if (equal? (verificar21 (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 1) #t) 
                            (append (list (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (cadr deck) (caddr deck) (cadddr deck) (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
+                           (cons (verificar21 (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 1)
                                  (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))
                        
-        ((= Jugador 2) (if (equal? (verificar21 (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))) #t) 
+        ((= Jugador 2) (if (equal? (verificar21 (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 2) #t) 
                            (append (list (car deck))
                                    (list (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (caddr deck) (cadddr deck) (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
+                           (cons (verificar21 (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 2)
                                  (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))        
         
-        ((= Jugador 3) (if (equal? (verificar21 (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))) #t) 
+        ((= Jugador 3) (if (equal? (verificar21 (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 3) #t) 
                            (append (list (car deck) (cadr deck))
                                    (list (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (cadddr deck) (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
+                           (cons (verificar21 (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 3)
                                  (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))
     
-        ((= Jugador 4) (if (equal? (verificar21 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))) #t) 
+        ((= Jugador 4) (if (equal? (verificar21 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 4) #t) 
                            (append (list (car deck) (cadr deck) (caddr deck))
                                    (list (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
+                           (cons (verificar21 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 4)
                                  (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))
         (else "Error")))
 
@@ -159,33 +160,45 @@
 
 
 ;;Funcion que verifica que la suma sea 21 o menor
-(define (verificar21 listaJugador)
-  (auxVerificar21 listaJugador 0))
+(define (verificar21 listaJugador J)
+  (auxVerificar21 listaJugador J 0))
 
 
-(define (auxVerificar21 listaJugador suma)
-  (cond ((null? listaJugador) (verificarSuma suma))
-        ;;Compara si la carta es un A para sumar 11
-        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "A") (auxVerificar21 (cdr listaJugador) (+ suma 11)))
+(define (auxVerificar21 listaJugador J suma)
+  (cond ((null? listaJugador) (verificarSuma J suma))
+        ;;Compara si la carta es un A para sumar 1 o 11
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "A") (auxVerificar21 (cdr listaJugador) J (+ suma 11)))
         ;;Compara si la carta es un K para sumar 10
-        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "K") (auxVerificar21 (cdr listaJugador) (+ suma 10)))
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "K") (auxVerificar21 (cdr listaJugador) J (+ suma 10)))
         ;;Compara si la carta es un Q para sumar 10
-        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "Q") (auxVerificar21 (cdr listaJugador) (+ suma 10)))
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "Q") (auxVerificar21 (cdr listaJugador) J (+ suma 10)))
         ;;Compara si la carta es un J para sumar 10
-        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "J") (auxVerificar21 (cdr listaJugador) (+ suma 10)))
-        (else (auxVerificar21 (cdr listaJugador) (+ suma (string->number (substring (symbol->string  (car listaJugador)) 0 2)))))))
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "J") (auxVerificar21 (cdr listaJugador) J (+ suma 10)))
+        (else (auxVerificar21 (cdr listaJugador) J (+ suma (string->number (substring (symbol->string  (car listaJugador)) 0 2)))))))
 
 
 ;;Verifica si la suma es 21 para declarar BlackJack o Fail o #t
-(define (verificarSuma suma)
-  (cond ((= suma 21) "BlackJack")
+(define (verificarSuma J suma)
+  (cond ((= J 4) (if (>= suma 17) "Crupier" #t))
+        ((= suma 21) "BlackJack")
         ((> suma 21) "Fail")
         (else #t)))
 
 
+;;Funcion plantarse
+(define (plantarse J deck)
+  (cond ((> J 5) (mostrarResultados deck))
+        ((= J 1)("Siga con el J2"))))
+
+
+;;Funcion que muestra los resultados
+(define (mostrarResultados deck)
+  (car deck))
+  
+
 ;(verificar21 '(10h 02s))
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
-(PedirCarta 2 (bCEj 3))
+(PedirCarta 4 (bCEj 3))
 ;(bCEj 3)
 
