@@ -5,10 +5,10 @@
 
 
 ;;Deck definido para barajar las cartas
-(define Deck  '(Ks Qs Js 10s 9s 8s 7s 6s 5s 4s 3s 2s As
-                Kh Qh Jh 10h 9h 8h 7h 6h 5h 4h 3h 2h Ah
-                Kd Qd Jd 10d 9d 8d 7d 6d 5d 4d 3d 2d Ad
-                Kc Qc Jc 10c 9c 8c 7c 6c 5c 4c 3c 2c Ac))
+(define Deck  '(Ks Qs Js 10s 09s 08s 07s 06s 05s 04s 03s 02s As
+                Kh Qh Jh 10h 09h 08h 07h 06h 05h 04h 03h 02h Ah
+                Kd Qd Jd 10d 09d 08d 07d 06d 05d 04d 03d 02d Ad
+                Kc Qc Jc 10c 09c 08c 07c 06c 05c 04c 03c 02c Ac))
 
 
 ;;Función Principal
@@ -101,10 +101,22 @@
         (else (deckGUI (- carta 1) (cdr deck)))))
 
 
-(comparacion 'Ac)
-;;Se define una variable de la matriz del juego
-;(define MatrixJuego (bCEj 3))
-;;MatrixJuego
+;;Funcion que verifica que la suma sea 21 o menor
+(define (verificar21 listaJugador)
+  (auxVerificar21 listaJugador 0))
+
+
+;;Funcion Auxiliar de verificacion de 21
+(define (auxVerificar21 listaJugador suma)
+  (cond ((null? listaJugador) #t)
+        ((= (+ suma (string->number (substring (symbol->string  (car listaJugador)) 0 2))) 21) "BlackJack")
+        ((> (+ suma (string->number (substring (symbol->string  (car listaJugador)) 0 2))) 21) "Fail")
+        (else (auxVerificar21 (cdr listaJugador) (+ suma (string->number (substring (symbol->string  (car listaJugador)) 0 2)))))))
+
+
+;(verificar21 '(10h 02s))
+;(string->number (substring (symbol->string  '9h) 0 1))
+;(comparacion 'Ac)
 ;(auxPedirCarta 3 43 MatrixJuego)
 ;(bCEj 3)
 
