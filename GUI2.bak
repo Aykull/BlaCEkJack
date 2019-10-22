@@ -1,6 +1,0 @@
-#lang racket
-
-(require games/cards)
-
-(define table
-  (make-table "Blackjack" 6 3))
