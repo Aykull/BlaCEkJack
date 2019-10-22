@@ -1,26 +1,36 @@
 #lang racket
-(provide (all-defined-out))
+
+;;Libreria de Cartas para graficar
+(require games/cards)
+
+
+;;Deck definido para barajar las cartas
+(define Deck  '(Ks Qs Js 10s 9s 8s 7s 6s 5s 4s 3s 2s As
+                Kh Qh Jh 10h 9h 8h 7h 6h 5h 4h 3h 2h Ah
+                Kd Qd Jd 10d 9d 8d 7d 6d 5d 4d 3d 2d Ad
+                Kc Qc Jc 10c 9c 8c 7c 6c 5c 4c 3c 2c Ac))
+
 
 ;;Función Principal
 (define (bCEj X)
-  (aux1bCEj X '(Ah 2h 3h 4h 5h 6h 7h 8h 9h 10h Jh Qh Kh
-               Ad 2d 3d 4d 5d 6d 7d 8d 9d 10d Jd Qd Kd
-               Ac 2c 3c 4c 5c 6c 7c 8c 9c 10c Jc Qc Kc
-               As 2s 3s 4s 5s 6s 7s 8s 9s 10s Js Qs Ks)))
+  (aux1bCEj X Deck))
+
 
 ;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
 ;;R1 (Numero Random 1), R2 (Numero Random 2)
 (define (aux1bCEj X deck)
   (aux2bCEj X (random 52) (random 52) 52 deck))
 
-  
+
 ;;Funcion Auxiliar 2 Principal, la cual construye la lista de jugadores con sus respectivas cartas
 (define (aux2bCEj X R1 R2 lenDeck deck)
   (cond ((= X -1) (list deck))
         ;;Compara si las dos cartas son iguales
         ((= R1 R2) (aux2bCEj X (random lenDeck) (random lenDeck) lenDeck deck))
     ;;retorna una lista con los jugadores y el diler
-    (else (cons (list (cartasAleatorias deck R1 0) (cartasAleatorias deck R2 0))  (aux2bCEj (- X 1) (random (- lenDeck 2)) (random (- lenDeck 2)) (- lenDeck 2) (modificarDeck R1 R2 0 0 deck))))))
+    (else (cons (list (cartasAleatorias deck R1 0) (cartasAleatorias deck R2 0))
+                (aux2bCEj (- X 1) (random (- lenDeck 2)) (random (- lenDeck 2)) (- lenDeck 2) (modificarDeck R1 R2 0 0 deck))))))
+
 
 ;;Funcion para modificar el deck eliminando 2 cartas y que no se repitan las cartas
 (define (modificarDeck pos pos2 cont cont2 deck)
@@ -30,12 +40,14 @@
         ((= pos2 cont) (modificarDeck pos pos2 (+ cont 1) (+ cont2 1) (cdr deck)))
         (else (cons (car deck) (modificarDeck pos pos2 (+ cont 1) (+ cont2 1) (cdr deck))))))
 
+
 ;;Funcion para modificar el deck eliminando 1 carta
 (define (modificarDeck2 pos cont deck)
   (cond ((null? deck) '())
         ((= pos cont) (cdr deck))
         (else (cons (car deck) (modificarDeck2 pos (+ cont 1) (cdr deck))))))
-     
+
+
 ;;Función Carta Aleatoria
 (define (cartasAleatorias deck numRandom contRandom)
   (cond
@@ -43,17 +55,15 @@
     ((= numRandom contRandom)(car deck)) 
     (else (cartasAleatorias (cdr deck) numRandom (+ 1 contRandom)))))
 
+
 ;;Funcion len de una Lista
 (define (lenList lista)
   (cond ((null? lista) 0)
   (else (+ 1 (lenList (cdr lista))))))
 
-;;Se define una variable de la matriz del juego
-(define MatrixJuego (bCEj 3))
-;;MatrixJuego
 
-;;Funcion para solicitar una carta y "sumar 21"
-(define (PedirCarta Jugador numRandom deck)
+;;Funcion auxiliar para solicitar una carta para un jugador X
+(define (auxPedirCarta Jugador numRandom deck)
   (cond ((null? deck) '())
         ((>= numRandom (lenList (car (cddddr deck)))) "Error el random sobrepasa el limite")
         ((> Jugador 5) "Error J5 No Existe")
@@ -71,4 +81,32 @@
         (else "Error")))
 
 
-;(PedirCarta 1 43 MatrixJuego)
+;;Funcion Para realizar una comparacion entre el Deck del GUI con Deck de la logica
+(define (comparacion carta)
+  (auxComparacion carta 0 Deck))
+
+
+;;Funcion auxiliar para realizar una comparacion
+(define (auxComparacion carta cont deck)
+  (cond ((null? deck) "Carta no encontrada")
+        ((equal? carta (car deck)) (deckGUI cont (make-deck)))
+        (else (auxComparacion carta (+ 1 cont) (cdr deck)))))
+
+
+;;Funcion que grafica la carta del deck
+(define (deckGUI carta deck)
+  (cond ((= carta 0) 
+         (write (send (car deck) get-value))
+         (write (send (car deck) get-suit)))
+        (else (deckGUI (- carta 1) (cdr deck)))))
+
+
+(comparacion 'Ac)
+;;Se define una variable de la matriz del juego
+;(define MatrixJuego (bCEj 3))
+;;MatrixJuego
+;(auxPedirCarta 3 43 MatrixJuego)
+;(bCEj 3)
+
+
+         
