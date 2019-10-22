@@ -13,10 +13,7 @@
 
 
 ;; Se crea una mesa
-(define table (make-table "Blackjack" 6 3))
-(define status-pane (send table create-status-pane))
-(send table add-scribble-button status-pane
-      '(lib "games/scribblings/games.scrbl") "blackjack")
+(define table (make-table "Blackjack" 8 6))
 (send table show #t)
 (send table set-double-click-action #f)
 
@@ -32,11 +29,11 @@
       null
       (append (make-deck) (loop (sub1 n))))))
 
-;; Card width & height
+;; Ancho y largo de las cartas
 (define cwidth (send (car deck) card-width))
 (define cheight (send (car deck) card-height))
 
-;; Definición del tamaño de los b
+;; Definición del tamaño de los botones
 (define BUTTON-HEIGHT 16)
 (define BUTTON-WIDTH cwidth)
 
@@ -61,33 +58,6 @@
                (- w (* 2 cwidth) (* 4 MARGIN)) cheight
                #f #f))
 
-;; In case of split, we need more regions
-(define ww (* 3/2 cwidth))
-(define player-2-region
-  (make-region MARGIN (region-y player1-region)
-               (- w ww (* 3 MARGIN)) (region-h player1-region)
-               #f #f))
-(define player-2-wait-region
-  (make-region (region-x player-2-region) (region-y player-2-region)
-               ww (region-h player-2-region)
-               #f #f))
-(define player-1-region
-  (make-region (- w MARGIN (region-w player-2-region)) (region-y player-2-region)
-               (region-w player-2-region) (region-h player-2-region)
-               #f #f))
-(define player-1-wait-region
-  (make-region (- (+ (region-x player-1-region) (region-w player-1-region)) ww)
-               (region-y player-1-region)
-               ww (region-h player-1-region)
-               #f #f))
-(define (make-border-region r)
-  (define hm (/ MARGIN 2))
-  (make-region (- (region-x r) hm) (- (region-y r) hm)
-               (+ (region-w r) MARGIN) (+ (region-h r) MARGIN)
-               "" #f))
-(define player-1-border (make-border-region player-1-region))
-(define player-2-border (make-border-region player-2-region))
-
 ;; Creacion de botones
 (define (make-button title pos)
   (make-button-region (+ (/ (- w (* 4 BUTTON-WIDTH) (* 3 MARGIN)) 2)
@@ -95,6 +65,7 @@
                       (- h MARGIN BUTTON-HEIGHT)
                       BUTTON-WIDTH BUTTON-HEIGHT
                       title void))
+
 (define hit-button (make-button "Hit" 1))
 (define stand-button (make-button "Stand" 2))
 
@@ -124,8 +95,10 @@
 
 ;; Funcion principal
 (let shuffle-loop ()
-  ;; Shuffle the cards, none are discarded, yet
-  (let* ([deck (shuffle-list deck 7)]
+  
+  ;; AQUI VA LA FUNCION QUE REPARTE LAS CARTAS INICIALES
+  (let*
+      ([deck (shuffle-list deck 7)]
          [discard null]
          [deal (lambda (n)
                  (let deal ([n n])
@@ -134,29 +107,31 @@
                      (let ([c (car deck)])
                        (set! deck (cdr deck))
                        (cons c (deal (sub1 n)))))))])
-    ;; Put the shuffled deck in place
+    
+    ;; PONE EL DECK EN LA MESA
     (send table move-cards-to-region deck deck-region)
     (send table stack-cards deck)
-    ;; Loop rounds over while there's enough cards in the deck
+    
+    ;; LOOP PRINCIPAL QUE SE EJECUTA HASTA QUE FINALICE EL JUEGO **VER CONDICION DE CUANDO SE ACABAN LAS CARTAS DEL DECK
+    ;;se debe modificar 
     (let loop ()
-      (let ([p (deal 2)]
-            [p2 null]) ; in case of splitting
+      (let ([p (deal 2)])
         
-        ;; Move the player's cards into place and show them
+        ;; Sección que mueve las cartas a la region del jugador
         (send table move-cards-to-region p player1-region)
         (send table cards-face-up p)
         
         ;; Deal to dealer
         (let ([d (deal 2)])
           
-          ;; Move the dealer's cards into place and show one
+          ;; Mueve las cartas del crupier a su region y muestra solo una
           (send table move-cards-to-region d crupier-region)
           (send table card-face-up (car d))
           
           (let* (
                  [continue (make-semaphore)]
                  
-                 ;; Make a button in the center to show results
+                 ;; Funcion que establece el resultado AQUI debería implementarse la tabla
                  [make-status
                   (lambda (title continue)
                     (let ([r (make-button-region
@@ -169,14 +144,16 @@
                                                 (semaphore-post continue)))
                       r))]
                  
-                 ;; Done with hand:
+                 ;; Esta funcion cambia los botones de la interfaz para mostrar el resultado, no necesaria para nuestra GUI
                  [done
                   (lambda (title continue)
                     (send table remove-region hit-button)
                     (send table remove-region stand-button)
-                    (send table add-region (make-status title continue)))]
+                    (send table add-region (make-status title continue))
+                    )]
                  
-                 ;; Compute winnings (not called for busts by the player)FUNCION PARA TERMINAR 
+                 ;; FUNCION PARA TERMINAR : calcula los puntajes finales, verifica blackjac aquí también se podría mostrar la tabla
+                 ;;introducir aqui funcion de la lógica :v
                  [finish
                   (lambda (p blackjack?)
                     (let ([pt (best-total p)]
@@ -196,7 +173,7 @@
                         [else (done "Push" continue)])
                       (yield continue)))]
 
-                 ;; Done with the first hand of a split
+                 ;;Termina el turno del jugador, funcion de la GUI
                  [finish-split
                   (lambda (p player-region player-wait-region player-border)
                     (unless (bust? p)
@@ -206,9 +183,9 @@
                       (send table remove-region player-border)
                       (send table move-cards-to-region p player-wait-region)))]
 
-                 ;; Player busts
+                 ;; Funcion para indicar que el jugador se paso de 21
                  [bust (lambda ()
-                         (done "Bust" continue))]
+                         (done "Usted se ha pasado de verga" continue))]
 
                  ;; Bust in one hand of a split
                  [local-bust (lambda ()
@@ -230,7 +207,7 @@
                       (when (bust? (get-p)) (bust))))])
 
 
-            ;; Blackjack by player or dealer?
+            ;; Funcion que verifica el blackjack natural, cambiar por la de lógica
             (if (or (= 21 (best-total p))
                     (= 21 (best-total d)))
               (begin
