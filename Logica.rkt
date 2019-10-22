@@ -27,7 +27,7 @@
 
 ;;Función Principal
 (define (bCEj X)
-  (cond ((= X 3) (aux1bCEj X Deck))
+  (cond ((= (lenList X) 3) (aux1bCEj 3 Deck))
         (else "Cantidad de jugadores no permitida")))
 
 
@@ -199,6 +199,6 @@
 ;(verificar21 '(10h 02s))
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
-(PedirCarta 4 (bCEj 3))
-;(bCEj 3)
+;(PedirCarta 4 (bCEj 3))
+(bCEj '("J" "K" "L"))
 
