@@ -101,24 +101,15 @@
         ((= jugador 1) (if (equal? funcion "Solicitar Carta")
                            (cons (PedirCarta 1 randomC deck) (cdr deck))
                            (#f)))
-        
-        #|((= jugador 2) (if (equal? (soliCarta 2 deck) "si")
-                           (if (list? (cadr (PedirCarta 2 randomC deck)))
-                               (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 2 randomC deck))
-                               (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(PedirCarta 2 randomC deck)) (cddr deck))))
-                           (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 1)) deck)))
-
-        ((= jugador 3) (if (equal? (soliCarta 3 deck) "si")
-                           (if (list? (caddr (PedirCarta 3 randomC deck)))
-                               (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 3 randomC deck))
-                               (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(cadr deck)) (list(PedirCarta 3 randomC deck)) (cdddr deck))))
-                           (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 1)) deck)))
-
-        ((= jugador 4) (if (equal? (soliCarta 4 deck) "si")
-                           (if (list? (caddr (PedirCarta 4 randomC deck)))
-                               (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 4 randomC deck))
-                               (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(cadr deck)) (list(caddr deck)) (list(PedirCarta 4 randomC deck)) (cddddr deck))))
-                           (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) deck)))|#
+        ((= jugador 2) (if (equal? funcion "Solicitar Carta")
+                           (append (list(car deck)) (list(PedirCarta 2 randomC deck)) (cddr deck))
+                           (#f)))
+        ((= jugador 3) (if (equal? funcion "Solicitar Carta")
+                           (append (list(car deck)) (list(cadr deck)) (list(PedirCarta 3 randomC deck)) (cdddr deck))
+                           (#f)))
+        ((= jugador 4) (if (equal? funcion "Solicitar Carta")
+                           (append (list(car deck)) (list(cadr deck)) (list(caddr deck)) (list(PedirCarta 4 randomC deck)) (cddddr deck))
+                           (#f)))
         
         (else deck)))
         
