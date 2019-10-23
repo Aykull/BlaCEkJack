@@ -120,7 +120,7 @@
                 (read ))
         ((= j 3)(print 'Jugador_3_Solicita_Carta?: )
                 (read ))
-        ((= j 4)(print 'Jugador_4_Solicita_Carta?: )
+        ((= j 4)(print 'Crupier_Solicita_Carta?: )
                 (read ))
         (else "Jugador No Existe")))
 
