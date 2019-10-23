@@ -1,21 +1,9 @@
 #lang racket
 
-;;Deck Principal
-#|'(Ks Qs Js 10s 09s 08s 07s 06s 05s 04s 03s 02s As
-    Kh Qh Jh 10h 09h 08h 07h 06h 05h 04h 03h 02h Ah
-    Kd Qd Jd 10d 09d 08d 07d 06d 05d 04d 03d 02d Ad
-    Kc Qc Jc 10c 09c 08c 07c 06c 05c 04c 03c 02c Ac)|#
-
-;;Deck de Pruebas para conseguir el BlackJack
-#| '(Ks Qs Js 10s As As Ks Qs Js 10s As As
-     As As As As As As 08j 09u 06f  As As 
-     Ks Qs Js 10s As As As As As As As As
-     08j 09u 06f As As Ks Qs Js 10s As As
-     As As As As As As 08j 09u 06f)|#
-
 
 ;;Libreria de Cartas para graficar
-(require games/cards "GUI.rkt")
+(require games/cards)
+(provide (all-defined-out))
 
 
 ;;Deck definido para barajar las cartas
@@ -27,7 +15,7 @@
 
 ;;Función Principal
 (define (bCEj X)
-  (cond ((= (lenList X) 3) (aux1bCEj 3 deck))
+  (cond ((= (lenList X) 3) (aux1bCEj 3 Deck))
         (else "Cantidad de jugadores no permitida")))
 
 

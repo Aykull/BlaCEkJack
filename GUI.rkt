@@ -1,7 +1,7 @@
 #lang racket
 
-(require games/cards racket/gui racket/class)
-(provide (all-defined-out))
+(require games/cards racket/gui racket/class "Logica.rkt")
+
 
 
 ;; Se crea una mesa
@@ -53,7 +53,9 @@
 ;  (make-region 50 50 cwidth cheight #f #f))
 ;
 
-
+;;Funcion para graficar
+(define (graficar region)
+         (send table move-cards-to-region (graficarcarta region ) region))
 
 ;; Creacion de botones
 (define (make-button title pos)
