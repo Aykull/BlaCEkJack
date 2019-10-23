@@ -17,7 +17,7 @@
 ;;Libreria de Cartas para graficar
 (require games/cards "GUI.rkt")
 
-;;LO QUE ESTE COMO "Deck" SE CAMBIA AHORA COMO "deck"
+
 ;;Deck definido para barajar las cartas
 (define Deck  '(Ks Qs Js 10s 09s 08s 07s 06s 05s 04s 03s 02s As
                 Kh Qh Jh 10h 09h 08h 07h 06h 05h 04h 03h 02h Ah
