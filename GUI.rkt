@@ -1,9 +1,8 @@
 #lang racket
 
-(require games/cards racket/gui racket/class racket/unit "Logica.rkt")
+(require games/cards racket/gui racket/class)
+(provide (all-defined-out))
 
-
-;(bCEj 3)
 
 ;; Se crea una mesa
 (define table (make-table "Blackjack" 8 6))
