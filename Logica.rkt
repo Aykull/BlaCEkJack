@@ -16,13 +16,15 @@
 ;;Función Principal
 (define (bCEj X)
   (cond ((= (lenList X) 3) (aux1bCEj 3 Deck))
+        ((= (lenList X) 2) (aux1bCEj 2 Deck))
+        ((= (lenList X) 1) (aux1bCEj 1 Deck))
         (else "Cantidad de jugadores no permitida")))
 
 
 ;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
 ;;R1 (Numero Random 1), R2 (Numero Random 2)
 (define (aux1bCEj X deck)
-  (IniciarJuego (aux2bCEj X (random 52) (random 52) 52 deck)))
+  (aux2bCEj X (random 52) (random 52) 52 deck))
 
 
 ;;Funcion Iniciar Juego
@@ -264,5 +266,5 @@
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
 ;(PedirCarta 1 (bCEj  '("J" "K" "L")))
-(bCEj '("J" "K" "L"))
+;(bCEj '("J" "K" "L"))
 
