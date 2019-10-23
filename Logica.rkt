@@ -88,23 +88,19 @@
 
 ;;Funcion len de una Lista
 (define (lenList lista)
-  (cond ((null? lista) 0)
-  (else (+ 1 (lenList (cdr lista))))))
-
+  (length lista))
 
 ;;Funcion Recorrer Deck Para saber si quieren cartas
-(define (recorrerDeck deck funcion j)
-  (auxRecorrerDeck j (random (- (lenList (car (cddddr deck))) 1)) deck funcion))
+(define (recorrerDeck jugador deck funcion)
+  (auxRecorrerDeck jugador (random (- (lenList (car (cddddr deck))) 1)) deck funcion))
 
         
 ;;Funcion auxiliar Recorrer Deck Para saber si quieren cartas
 (define (auxRecorrerDeck jugador randomC deck funcion)
   (cond ((null? (cdddr deck)) "Ya no hay cartas")
         ((= jugador 1) (if (equal? funcion "Solicitar Carta")
-                           (if (list? (car (PedirCarta 1 randomC deck)))
-                               (PedirCarta 1 randomC deck)
-                               (cons (PedirCarta 1 randomC deck) (cdr deck)))
-                           (deck)))
+                           (cons (PedirCarta 1 randomC deck) (cdr deck))
+                           (#f)))
         
         #|((= jugador 2) (if (equal? (soliCarta 2 deck) "si")
                            (if (list? (cadr (PedirCarta 2 randomC deck)))
@@ -152,19 +148,19 @@
         ((> Jugador 5) "Error El Jugador No Existe")
         ((= Jugador 1) (if (equal? (verificar21 (car deck) 1) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car deck) 1) (car deck))))
+                           (car deck)))
         
         ((= Jugador 2) (if (equal? (verificar21 (car (cdr deck)) 2) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car (cdr deck)) 2) (car (cdr deck)))))
+                           (car (cdr deck))))
         
         ((= Jugador 3) (if (equal? (verificar21 (car (cddr deck)) 3) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car (cddr deck)) 3) (car (cddr deck)))))
+                           (car (cddr deck))))
     
         ((= Jugador 4) (if (equal? (verificar21 (car (cdddr deck)) 4) #t) 
                            (aux2PedirCarta Jugador numRandom deck)
-                           (cons (verificar21 (car (cdddr deck)) 4) (car (cdddr deck)))))
+                           (car (cdddr deck))))
         (else "Error")))
 
 
@@ -176,29 +172,25 @@
         ((= Jugador 1) (if (equal? (verificar21 (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 1) #t) 
                            (append (list (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (cadr deck) (caddr deck) (cadddr deck) (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 1)
-                                 (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))
+                           (append (car deck) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))))
                        
         ((= Jugador 2) (if (equal? (verificar21 (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 2) #t) 
                            (append (list (car deck))
                                    (list (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (caddr deck) (cadddr deck) (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 2)
-                                 (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))        
+                           (append (car (cdr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))))        
         
         ((= Jugador 3) (if (equal? (verificar21 (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 3) #t) 
                            (append (list (car deck) (cadr deck))
                                    (list (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (cadddr deck) (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 3)
-                                 (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))
+                           (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))))
     
         ((= Jugador 4) (if (equal? (verificar21 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 4) #t) 
                            (append (list (car deck) (cadr deck) (caddr deck))
                                    (list (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
                                    (list (modificarDeck2 numRandom 0 (car (cddddr deck)))))
-                           (cons (verificar21 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 4)
-                                 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))))
+                           (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))))
         (else "Error")))
 
 
@@ -209,7 +201,7 @@
 
 ;;Funcion auxiliar para realizar una comparacion
 (define (auxComparacion carta cont deck deckGUI)
-  (cond ((null? deck) '())
+  (cond ((null? deck) "Carta no encontrada")
         ((equal? carta (car deck)) (FuncionDeckGUI cont deckGUI))
         (else (auxComparacion carta (+ 1 cont) (cdr deck) deckGUI))))
 
@@ -276,6 +268,6 @@
 ;(verificar21 '(10h 02s))
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
-;(PedirCarta 1 (bCEj  '("J" "K" "L")))
+;(PedirCarta 1 (bCEj  '("J" "K" "L")) '())
 ;(bCEj '("J" "k"))
 

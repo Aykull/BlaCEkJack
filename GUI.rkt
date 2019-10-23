@@ -42,11 +42,14 @@
 (define stand-button (make-button "Plantarse" 2))
 
 (define (solicitar_Carta)
-  (set! deck (recorrerDeck deck "Solicitar Carta" 1))
-  (set! p1 (append (retornarCartas 1 deck deckGUI) p1))
-   (send table stack-cards p1)
-   (send table move-cards-to-region p1 player1-region)
-   (send table cards-face-up p1))
+  (auxS_C1 (recorrerDeck 1 deck "Solicitar Carta")))
+(define (auxS_C1 lista)
+  (cond ((equal? lista #f) "Segundo jugador")
+        (else (set! deck lista)
+              (set! p1 (retornarCartas 1 deck deckGUI))
+              (send table stack-cards p1)
+              (send table move-cards-to-region p1 player1-region)
+              (send table cards-face-up p1))))
 
 (set-region-callback! hit-button solicitar_Carta) 
 
