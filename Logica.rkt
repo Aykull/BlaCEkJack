@@ -22,7 +22,20 @@
 ;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
 ;;R1 (Numero Random 1), R2 (Numero Random 2)
 (define (aux1bCEj X deck)
-  (recorrerDeck (aux2bCEj X (random 52) (random 52) 52 deck)))
+  (IniciarJuego (aux2bCEj X (random 52) (random 52) 52 deck)))
+
+
+;;Funcion Iniciar Juego
+(define (IniciarJuego deck)
+  (cond ((null? deck) "Error Deck Vacio")
+        (else "Error"))
+  (display (retornarCartas 1 deck))
+  (display (retornarCartas 2 deck))
+  (display (retornarCartas 3 deck))
+  (display (retornarCartas 4 deck))
+  (display "\n")
+  (recorrerDeck deck))
+        
 
 
 ;;Funcion Auxiliar 2 Principal, la cual construye la lista de jugadores con sus respectivas cartas
@@ -190,8 +203,7 @@
 ;;Funcion que grafica la carta del deck
 (define (deckGUI carta deck)
   (cond ((= carta 0) 
-         (write (send (car deck) get-value))
-         (write (send (car deck) get-suit)))
+         (car deck))
         (else (deckGUI (- carta 1) (cdr deck)))))
 
 
@@ -230,6 +242,22 @@
 ;;Funcion que muestra los resultados
 (define (mostrarResultados deck)
   (car deck))
+
+
+;;Funcion retorna las Cartas
+(define (retornarCartas Jugador deck)
+  (cond ((null? deck) "Ya no hay cartas")
+        ((= Jugador 1) (graficarCartas (car deck)))
+        ((= Jugador 2) (graficarCartas (cadr deck)))
+        ((= Jugador 3) (graficarCartas (caddr deck)))
+        ((= Jugador 4) (graficarCartas (cadddr deck)))
+        (else "Cartas Graficadas")))
+
+
+;;Funcion graficar las Cartas
+(define (graficarCartas lista)
+  (cond ((null? lista) '())
+        (else (append (list (comparacion (car lista))) (graficarCartas (cdr lista))))))
   
 
 ;(verificar21 '(10h 02s))
