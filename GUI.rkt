@@ -1,8 +1,9 @@
 #lang racket
 
-(require games/cards racket/gui racket/class racket/unit)
+(require games/cards racket/gui racket/class racket/unit "Logica.rkt")
 
 
+;(bCEj 3)
 
 ;; Se crea una mesa
 (define table (make-table "Blackjack" 8 6))
@@ -17,7 +18,6 @@
 (define SUBMARGIN 10)
 (define LABEL-H 15)
 
-
 ;;Construcción del deck de la GUI
 (define deck (make-deck))
 
@@ -29,9 +29,9 @@
 (define BUTTON-HEIGHT 16)
 (define BUTTON-WIDTH cwidth)
 
-;; Evita que el usuario mueva las cartas 
-(for-each (lambda (card) (send* card (user-can-move #f) (user-can-flip #f)))
-          deck)
+;;; Evita que el usuario mueva las cartas 
+;(for-each (lambda (card) (send* card (user-can-move #f) (user-can-flip #f)))
+;          deck)
 
 ;; Crea regiones de juego para los jugadores
 (define deck-region
@@ -50,6 +50,12 @@
                (- w (* 2 cwidth) (* 4 MARGIN)) cheight
                #f #f))
 
+;(define player1-region
+;  (make-region 50 50 cwidth cheight #f #f))
+;
+
+
+
 ;; Creacion de botones
 (define (make-button title pos)
   (make-button-region (+ (/ (- w (* 4 BUTTON-WIDTH) (* 3 MARGIN)) 2)
@@ -62,11 +68,15 @@
 (define stand-button (make-button "Stand" 2))
 
 ;; Se ponen las cartas sobre la mesa
-(send table add-cards-to-region deck deck-region)
 
+(send table add-cards-to-region deck deck-region)
+;(send table move-cards-to-region (deal 2) player1-region)
+
+
+;(define (play 
 ; PONE EL DECK EN LA MESA
-    (send table move-cards-to-region deck deck-region)
-    (send table stack-cards deck)
+;(send table move-cards-to-region deck deck-region)
+;(send table stack-cards deck)
 
 
 ;;; Funcion principal
@@ -243,24 +253,32 @@
 ;            (send table move-cards-to-region discard discard-region) ;; mueve las cartas de una zona a otra
 ;           
 ;              (loop)))))))
-
-;; Function to compute the normal or minimum value of a card
-(define (min-card-value c)
-  (let ([v (send c get-value)]) (if (> v 10) 10 v)))
-
-;; Function to compute the value of a hand, counting aces as 1 or 11
-;;  to get the highest total possible under 21
-(define (best-total l)
-  (let* ([ace? (lambda (is?) (lambda (c) (eq? is? (= (send c get-value) 1))))]
-         [aces (filter (ace? #t) l)]
-         [others (filter (ace? #f) l)]
-         [base (apply + (map min-card-value others))])
-    (let loop ([l aces][base base])
-      (cond [(null? l) base]
-            [(<= (+ base (* (length aces) 11)) 21)
-             (+ base (* (length aces) 11))]
-            [else (loop (cdr l) (add1 base))]))))
-
-;; Function to test whether a hand is a bust
-(define (bust? p)
-  (> (best-total p) 21))
+;
+;;; Function to compute the normal or minimum value of a card
+;(define (min-card-value c)
+;  (let ([v (send c get-value)]) (if (> v 10) 10 v)))
+;
+;;; Function to compute the value of a hand, counting aces as 1 or 11
+;;;  to get the highest total possible under 21
+;(define (best-total l)
+;  (let* ([ace? (lambda (is?) (lambda (c) (eq? is? (= (send c get-value) 1))))]
+;         [aces (filter (ace? #t) l)]
+;         [others (filter (ace? #f) l)]
+;         [base (apply + (map min-card-value others))])
+;    (let loop ([l aces][base base])
+;      (cond [(null? l) base]
+;            [(<= (+ base (* (length aces) 11)) 21)
+;             (+ base (* (length aces) 11))]
+;            [else (loop (cdr l) (add1 base))]))))
+;
+;;; Function to test whether a hand is a bust
+;(define (bust? p)
+;  (> (best-total p) 21))
+;
+;(define (deal n)
+;                 (let deal ([n n])
+;                   (if (zero? n)
+;                     null
+;                     (let ([c (car deck)])
+;                       (set! deck (cdr deck))
+;                       (cons c (deal (sub1 n)))))))
