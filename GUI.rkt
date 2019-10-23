@@ -1,6 +1,7 @@
 #lang racket
 
 (require games/cards racket/gui racket/class "Logica.rkt")
+(require games/cards racket/gui racket/class)
 
 
 
@@ -28,9 +29,20 @@
 (define BUTTON-HEIGHT 16)
 (define BUTTON-WIDTH cwidth)
 
-;;; Evita que el usuario mueva las cartas 
-;(for-each (lambda (card) (send* card (user-can-move #f) (user-can-flip #f)))
-;          deck)
+;; Creacion de botones
+(define (make-button title pos)
+  (make-button-region (+ (/ (- w (* 4 BUTTON-WIDTH) (* 3 MARGIN)) 2)
+                         (* pos (+ BUTTON-WIDTH MARGIN)))
+                      (- h MARGIN BUTTON-HEIGHT)
+                      BUTTON-WIDTH BUTTON-HEIGHT
+                      title void))
+
+(define hit-button (make-button "Pedir carta" 1))
+(define stand-button (make-button "Plantarse" 2))
+
+;Evita que el usuario mueva las cartas 
+(for-each (lambda (card) (send* card (user-can-move #f) (user-can-flip #f)))
+          deck)
 
 ;; Crea regiones de juego para los jugadores
 (define deck-region
@@ -49,37 +61,61 @@
                (- w (* 2 cwidth) (* 4 MARGIN)) cheight
                #f #f))
 
+(define player2-region
+  (make-region 350 215
+               (+ cwidth 115) cheight
+                #f #f))
+
+(define player3-region
+  (make-region  MARGIN 215
+               (+ cwidth 100) cheight
+               #f #f))
+
 ;(define player1-region
 ;  (make-region 50 50 cwidth cheight #f #f))
 ;
 
 ;;Funcion para graficar
-(define (graficar region)
-         (send table move-cards-to-region (graficarcarta region ) region))
+;(define (graficar region)
+;         (send table move-cards-to-region (retornarcarta region ) region))
 
-;; Creacion de botones
-(define (make-button title pos)
-  (make-button-region (+ (/ (- w (* 4 BUTTON-WIDTH) (* 3 MARGIN)) 2)
-                         (* pos (+ BUTTON-WIDTH MARGIN)))
-                      (- h MARGIN BUTTON-HEIGHT)
-                      BUTTON-WIDTH BUTTON-HEIGHT
-                      title void))
-
-(define hit-button (make-button "Hit" 1))
-(define stand-button (make-button "Stand" 2))
 
 ;; Se ponen las cartas sobre la mesa
-
 (send table add-cards-to-region deck deck-region)
 ;(send table move-cards-to-region (deal 2) player1-region)
 
+;
+;(define (deal n)
+;                 (let deal ([n n])
+;                   (if (zero? n)
+;                     null
+;                     (let ([c (car deck)])
+;                       (set! deck (cdr deck))
+;                       (cons c (deal (sub1 n)))))))
 
-;(define (play 
-; PONE EL DECK EN LA MESA
-;(send table move-cards-to-region deck deck-region)
-;(send table stack-cards deck)
+;(define play1
+;  (send table move-cards-to-region (deal 6) player1-region)
+;  )
+;
+;(define play2
+;  (send table move-cards-to-region (deal 5) player2-region))
+;
+;(define play3
+;  (send table move-cards-to-region (deal 5) player3-region))
 
+(define (graficarTabla)
+  (+ 2 2))
 
+(define (main)
+  (
+   (send table move-cards-to-region (retornarCartas 1 deck) crupier-region)
+   (send table move-cards-to-region (deal 2) player1-region)
+   (send table move-cards-to-region (deal 2) player2-region)
+   (send table move-cards-to-region (deal 2) player3-region)
+   (graficarTabla)
+   
+   )
+  )
 ;;; Funcion principal
 ;(let shuffle-loop ()
 ;  
@@ -254,7 +290,7 @@
 ;            (send table move-cards-to-region discard discard-region) ;; mueve las cartas de una zona a otra
 ;           
 ;              (loop)))))))
-;
+;;
 ;;; Function to compute the normal or minimum value of a card
 ;(define (min-card-value c)
 ;  (let ([v (send c get-value)]) (if (> v 10) 10 v)))
@@ -276,10 +312,3 @@
 ;(define (bust? p)
 ;  (> (best-total p) 21))
 ;
-;(define (deal n)
-;                 (let deal ([n n])
-;                   (if (zero? n)
-;                     null
-;                     (let ([c (car deck)])
-;                       (set! deck (cdr deck))
-;                       (cons c (deal (sub1 n)))))))

@@ -1,1 +1,1 @@
-("7.4" racket ("4129ebda3ec733c070a9bbe258041eece40712d7" . "2e2dbf4540e06ef46efb4b915fb9674ca411c43d") (collects #"errortrace" #"errortrace-key.rkt") (collects #"games" #"cards.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))
+("7.4" racket ("8771437c06d69cb87b6ce8d17f4acc943f106d07" . "2e2dbf4540e06ef46efb4b915fb9674ca411c43d") (collects #"errortrace" #"errortrace-key.rkt") (collects #"games" #"cards.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))

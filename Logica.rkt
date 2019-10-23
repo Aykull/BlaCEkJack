@@ -264,5 +264,5 @@
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
 ;(PedirCarta 1 (bCEj  '("J" "K" "L")))
-(bCEj '("J" "K" "L"))
+;(bCEj '("J" "K" "L"))
 
