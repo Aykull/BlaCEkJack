@@ -24,8 +24,16 @@
 ;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
 ;;R1 (Numero Random 1), R2 (Numero Random 2)
 (define (aux1bCEj X deck)
-  (aux2bCEj X (random 52) (random 52) 52 deck))
+  (juego (aux2bCEj X (random 52) (random 52) 52 deck)))
 
+
+;;Funcion Juego
+(define (juego deck)
+  (cond ((= (lenList deck) 5) (IniciarJuego deck))
+        ((= (lenList deck) 4) (IniciarJuego (append (list (car deck)) (list (cadr deck)) '(()) (list (caddr deck)) (list (cadddr deck)))))
+        ((= (lenList deck) 3) (IniciarJuego (append (list (car deck)) '(()) '(()) (list (cadr deck)) (list (caddr deck)))))
+        (else "Sin Jugadores")))
+        
 
 ;;Funcion Iniciar Juego
 (define (IniciarJuego deck)
@@ -88,25 +96,25 @@
 ;;Funcion auxiliar Recorrer Deck Para saber si quieren cartas
 (define (auxRecorrerDeck jugador randomC deck)
   (cond ((null? (cdddr deck)) "Ya no hay cartas")
-        ((= jugador 1) (if (equal? (soliCarta 1) "si")
+        ((= jugador 1) (if (equal? (soliCarta 1 deck) "si")
                            (if (list? (car (PedirCarta 1 randomC deck)))
                                (auxRecorrerDeck 1 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 1 randomC deck))
                                (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 1)) (cons (PedirCarta 1 randomC deck) (cdr deck))))
                            (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 1)) deck)))
         
-        ((= jugador 2) (if (equal? (soliCarta 2) "si")
+        ((= jugador 2) (if (equal? (soliCarta 2 deck) "si")
                            (if (list? (cadr (PedirCarta 2 randomC deck)))
                                (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 2 randomC deck))
                                (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(PedirCarta 2 randomC deck)) (cddr deck))))
                            (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 1)) deck)))
 
-        ((= jugador 3) (if (equal? (soliCarta 3) "si")
+        ((= jugador 3) (if (equal? (soliCarta 3 deck) "si")
                            (if (list? (caddr (PedirCarta 3 randomC deck)))
                                (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 3 randomC deck))
                                (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(cadr deck)) (list(PedirCarta 3 randomC deck)) (cdddr deck))))
                            (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 1)) deck)))
 
-        ((= jugador 4) (if (equal? (soliCarta 4) "si")
+        ((= jugador 4) (if (equal? (soliCarta 4 deck) "si")
                            (if (list? (caddr (PedirCarta 4 randomC deck)))
                                (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 4 randomC deck))
                                (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(cadr deck)) (list(caddr deck)) (list(PedirCarta 4 randomC deck)) (cddddr deck))))
@@ -116,16 +124,16 @@
         
 
 ;;Solicitar carta a jugador
-(define (soliCarta j)
+(define (soliCarta j deck)
   (cond ((= j 1)(print 'Jugador_1_Solicita_Carta?: )
                 (read ))
-        ((= j 2)(print 'Jugador_2_Solicita_Carta?: )
+        ((and (= j 2) (not (null? (cadr deck))))(print 'Jugador_2_Solicita_Carta?: )
                 (read ))
-        ((= j 3)(print 'Jugador_3_Solicita_Carta?: )
+        ((and (= j 3) (not (null? (caddr deck))))(print 'Jugador_3_Solicita_Carta?: )
                 (read ))
-        ((= j 4)(print 'Crupier_Solicita_Carta?: )
+        ((and (= j 4) (not (null? (cadddr deck))))(print 'Crupier_Solicita_Carta?: )
                 (read ))
-        (else "Jugador No Existe")))
+        (else '())))
 
 
 ;;Funcion para solicitar una carta
@@ -250,10 +258,10 @@
 (define (retornarCartas Jugador deck)
   (cond ((null? deck) "Ya no hay cartas")
         ((= Jugador 1) (graficarCartas (car deck)))
-        ((= Jugador 2) (graficarCartas (cadr deck)))
-        ((= Jugador 3) (graficarCartas (caddr deck)))
-        ((= Jugador 4) (graficarCartas (cadddr deck)))
-        (else "Cartas Graficadas")))
+        ((and (= Jugador 2) (not (null? (cadr deck)))) (graficarCartas (cadr deck)))
+        ((and (= Jugador 3) (not (null? (caddr deck)))) (graficarCartas (caddr deck)))
+        ((and (= Jugador 4) (not (null? (cadddr deck)))) (graficarCartas (cadddr deck)))
+        (else '())))
 
 
 ;;Funcion graficar las Cartas
@@ -266,5 +274,5 @@
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
 ;(PedirCarta 1 (bCEj  '("J" "K" "L")))
-;(bCEj '("J" "K" "L"))
+(bCEj '("J"))
 
