@@ -1,11 +1,14 @@
 #lang racket
 
 (require games/cards racket/gui racket/class "Logica.rkt")
-;(require games/cards racket/gui racket/class)
+
 
 ;; Se crea una mesa
 (define table (make-table "Blackjack" 8 6))
 (send table show #t)
+
+(define winner (make-table "Congratulation" 4 3))
+
 
 ;; Retorno del ancho y el largo de la mesa
 (define w (send table table-width))
@@ -30,28 +33,7 @@
 (define BUTTON-HEIGHT 16)
 (define BUTTON-WIDTH cwidth)
 
-;; Creacion de botones
-(define (make-button title pos)
-  (make-button-region (+ (/ (- w (* 4 BUTTON-WIDTH) (* 3 MARGIN)) 2)
-                         (* pos (+ BUTTON-WIDTH MARGIN)))
-                      (- h MARGIN BUTTON-HEIGHT)
-                      BUTTON-WIDTH BUTTON-HEIGHT
-                      title void))
 
-(define hit-button (make-button "Pedir carta" 1))
-(define stand-button (make-button "Plantarse" 2))
-
-(define (solicitar_Carta)
-  (auxS_C1 (recorrerDeck 1 deck "Solicitar Carta")))
-(define (auxS_C1 lista)
-  (cond ((equal? lista #f) "Segundo jugador")
-        (else (set! deck lista)
-              (set! p1 (retornarCartas 1 deck deckGUI))
-              (send table stack-cards p1)
-              (send table move-cards-to-region p1 player1-region)
-              (send table cards-face-up p1))))
-
-(set-region-callback! hit-button solicitar_Carta) 
 
 ;Evita que el usuario mueva las cartas 
 #|(for-each (lambda (card) (send* card (user-can-move #f) (user-can-flip #f)))
@@ -91,9 +73,122 @@
 (define p3 (retornarCartas 3 deck deckGUI))
 (define d (retornarCartas 4 deck deckGUI))
 
+;; Creacion de botones
+;;;
+(define (make-button1 title esp)
+  (make-button-region (+ 208 esp) 550 BUTTON-WIDTH BUTTON-HEIGHT title void))
+  
+(define (make-button2 title esp)
+  (make-button-region (+ 400 esp) 350 BUTTON-WIDTH BUTTON-HEIGHT title void))
+
+(define (make-button3 title esp)
+  (make-button-region (+ 10 esp) 350 BUTTON-WIDTH BUTTON-HEIGHT title void))
+;;;
+(define (make-buttonJ1 title )
+  (make-button-region 250 400 BUTTON-WIDTH BUTTON-HEIGHT title void ))
+
+(define (make-buttonJ2 title )
+  (make-button-region 450 150 BUTTON-WIDTH BUTTON-HEIGHT title void ))
+
+(define (make-buttonJ3 title )
+  (make-button-region 50 150 BUTTON-WIDTH BUTTON-HEIGHT title void ))
+;;;
+(define hit-button1 (make-button1 "Pedir carta" 1))
+(define stand-button1 (make-button1 "Plantarse" 90))
+
+(define hit-button2 (make-button2 "Pedir carta" 1))
+(define stand-button2 (make-button2 "Plantarse" 90))
+
+(define hit-button3 (make-button3 "Pedir carta" 1))
+(define stand-button3 (make-button3 "Plantarse" 90))
+;;;
+(define j1 (make-buttonJ1 "Jugador 1" ))
+(define j2 (make-buttonJ2 "Jugador 2" ))
+(define j3 (make-buttonJ3 "Jugador 3" ))
+;;;
+(define  (make-buttonW title pos)
+  (make-button-region 30 (+ 50 pos) BUTTON-WIDTH BUTTON-HEIGHT title void ))
+;;;
+(define wj1 (make-buttonW "Jugador 1" 1))
+(define wj2 (make-buttonW "Jugador 2" 60))
+(define wj3 (make-buttonW "Jugador 3" 120))
+(define crupi (make-buttonW "Crupier" 180))
+;;;
+(send winner add-region wj1)
+(send winner add-region wj2)
+(send winner add-region wj3)
+(send winner add-region crupi)
+
+(define (solicitar_Carta)
+  (auxS_C1 (recorrerDeck 1 deck "Solicitar Carta")))
+(define (auxS_C1 lista)
+  (cond ((equal? lista #f) "Segundo jugador")
+        (else (set! deck lista)
+              (set! p1 (retornarCartas 1 deck deckGUI))
+              (send table stack-cards p1)
+              (send table move-cards-to-region p1 player1-region)
+              (send table cards-face-up p1))))
+
+(define (solicitar_Carta2)
+  (auxS_C2 (recorrerDeck 2 deck "Solicitar Carta")))
+(define (auxS_C2 lista)
+  (cond ((equal? lista #f) "Segundo jugador")
+        (else (set! deck lista)
+              (set! p2 (retornarCartas 2 deck deckGUI))
+              (send table stack-cards p2)
+              (send table move-cards-to-region p2 player2-region)
+              (send table cards-face-up p2))))
+
+(define (solicitar_Carta3)
+  (auxS_C3 (recorrerDeck 3 deck "Solicitar Carta")))
+(define (auxS_C3 lista)
+  (cond ((equal? lista #f) "Segundo jugador")
+        (else (set! deck lista)
+              (set! p3 (retornarCartas 3 deck deckGUI))
+              (send table stack-cards p3)
+              (send table move-cards-to-region p3 player3-region)
+              (send table cards-face-up p3))))
+
+(send table add-region hit-button1)
+(send table add-region stand-button1)
+
+(set-region-callback! hit-button1 solicitar_Carta)
+
+(define (plantarse1)
+  (send table remove-region hit-button1)
+  (send table remove-region stand-button1)
+  (send table add-region hit-button2)
+  (send table add-region stand-button2))
+  
+(set-region-callback! stand-button1 plantarse1)
+
+(set-region-callback! hit-button2 solicitar_Carta2)
+
+(define (plantarse2)
+  (send table remove-region hit-button2)
+  (send table remove-region stand-button2)
+  (send table add-region hit-button3)
+  (send table add-region stand-button3))
+
+(set-region-callback! stand-button2 plantarse2)
+
+(set-region-callback! hit-button3 solicitar_Carta3)
+
+(define (plantarse3)
+  (send table remove-region hit-button3)
+  (send table remove-region stand-button3)
+  ;funcion con la logica para que juegue el crupier
+  (send winner show #t)
+  )
+
+(set-region-callback! stand-button3 plantarse3)
+  
+(send table add-region j1)
+(send table add-region j2)
+(send table add-region j3)
 
 (define (main)
-   (send table add-region hit-button)
+   ;(send table add-region hit-button)
    (send table move-cards-to-region p1 player1-region)
    (send table move-cards-to-region p2 player2-region)
    (send table move-cards-to-region p3 player3-region)
