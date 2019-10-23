@@ -34,7 +34,7 @@
 ;;Funcion Auxiliar 1 Principal, la cual construye la lista de jugadores con sus respectivas cartas
 ;;R1 (Numero Random 1), R2 (Numero Random 2)
 (define (aux1bCEj X deck)
-  (aux2bCEj X (random 52) (random 52) 52 deck))
+  (recorrerDeck (aux2bCEj X (random 52) (random 52) 52 deck)))
 
 
 ;;Funcion Auxiliar 2 Principal, la cual construye la lista de jugadores con sus respectivas cartas
@@ -44,7 +44,7 @@
         ((= R1 R2) (aux2bCEj X (random lenDeck) (random lenDeck) lenDeck deck))
     ;;retorna una lista con los jugadores y el diler
     (else (cons (list (cartasAleatorias deck R1 0) (cartasAleatorias deck R2 0))
-                (aux2bCEj (- X 1) (random (- lenDeck 2)) (random (- lenDeck 2)) (- lenDeck 2) (modificarDeck R1 R2 0 0 deck))))))
+                              (aux2bCEj (- X 1) (random (- lenDeck 2)) (random (- lenDeck 2)) (- lenDeck 2) (modificarDeck R1 R2 0 0 deck))))))
 
 
 ;;Funcion para modificar el deck eliminando 2 cartas y que no se repitan las cartas
@@ -77,9 +77,57 @@
   (else (+ 1 (lenList (cdr lista))))))
 
 
+;;Funcion Recorrer Deck Para saber si quieren cartas
+(define (recorrerDeck deck)
+  (auxRecorrerDeck 1 (random (- (lenList (car (cddddr deck))) 1)) deck))
+
+        
+;;Funcion auxiliar Recorrer Deck Para saber si quieren cartas
+(define (auxRecorrerDeck jugador randomC deck)
+  (cond ((null? (cdddr deck)) "Ya no hay cartas")
+        ((= jugador 1) (if (equal? (soliCarta 1) "si")
+                           (if (list? (car (PedirCarta 1 randomC deck)))
+                               (auxRecorrerDeck 1 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 1 randomC deck))
+                               (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 1)) (cons (PedirCarta 1 randomC deck) (cdr deck))))
+                           (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 1)) deck)))
+        
+        ((= jugador 2) (if (equal? (soliCarta 2) "si")
+                           (if (list? (cadr (PedirCarta 2 randomC deck)))
+                               (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 2 randomC deck))
+                               (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(PedirCarta 2 randomC deck)) (cddr deck))))
+                           (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 1)) deck)))
+
+        ((= jugador 3) (if (equal? (soliCarta 3) "si")
+                           (if (list? (caddr (PedirCarta 3 randomC deck)))
+                               (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 3 randomC deck))
+                               (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(cadr deck)) (list(PedirCarta 3 randomC deck)) (cdddr deck))))
+                           (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 1)) deck)))
+
+        ((= jugador 4) (if (equal? (soliCarta 4) "si")
+                           (if (list? (caddr (PedirCarta 4 randomC deck)))
+                               (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 4 randomC deck))
+                               (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(cadr deck)) (list(caddr deck)) (list(PedirCarta 4 randomC deck)) (cddddr deck))))
+                           (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) deck)))
+        
+        (else deck)))
+        
+
+;;Solicitar carta a jugador
+(define (soliCarta j)
+  (cond ((= j 1)(print 'Jugador_1_Solicita_Carta?: )
+                (read ))
+        ((= j 2)(print 'Jugador_2_Solicita_Carta?: )
+                (read ))
+        ((= j 3)(print 'Jugador_3_Solicita_Carta?: )
+                (read ))
+        ((= j 4)(print 'Jugador_4_Solicita_Carta?: )
+                (read ))
+        (else "Jugador No Existe")))
+
+
 ;;Funcion para solicitar una carta
-(define (PedirCarta Jugador deck)
-  (aux1PedirCarta Jugador (random (- (lenList (car (cddddr deck))) 1))  deck))
+(define (PedirCarta Jugador randomC deck)
+  (aux1PedirCarta Jugador randomC  deck))
 
 
 ;;Funcion auxiliar 1 para solicitar una carta verifica la lista del jugador antes de agregar carta
@@ -199,6 +247,6 @@
 ;(verificar21 '(10h 02s))
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
-;(PedirCarta 4 (bCEj 3))
+;(PedirCarta 1 (bCEj  '("J" "K" "L")))
 (bCEj '("J" "K" "L"))
 
