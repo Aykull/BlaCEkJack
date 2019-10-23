@@ -29,20 +29,24 @@
 
 ;;Funcion Juego
 (define (juego deck)
-  (cond ((= (lenList deck) 5) (IniciarJuego deck))
+  (cond ((= (lenList deck) 5) deck)
+        ((= (lenList deck) 4) (append (list (car deck)) (list (cadr deck)) '(()) (list (caddr deck)) (list (cadddr deck))))
+        ((= (lenList deck) 3) (append (list (car deck)) '(()) '(()) (list (cadr deck)) (list (caddr deck))))
+        (else "Sin Jugadores")))
+  #|(cond ((= (lenList deck) 5) (IniciarJuego deck))
         ((= (lenList deck) 4) (IniciarJuego (append (list (car deck)) (list (cadr deck)) '(()) (list (caddr deck)) (list (cadddr deck)))))
         ((= (lenList deck) 3) (IniciarJuego (append (list (car deck)) '(()) '(()) (list (cadr deck)) (list (caddr deck)))))
-        (else "Sin Jugadores")))
+        (else "Sin Jugadores")))|#
         
 
 ;;Funcion Iniciar Juego
 (define (IniciarJuego deck)
   (cond ((null? deck) "Error Deck Vacio")
         (else "Error"))
-  (display (retornarCartas 1 deck))
+  #|(display (retornarCartas 1 deck))
   (display (retornarCartas 2 deck))
   (display (retornarCartas 3 deck))
-  (display (retornarCartas 4 deck))
+  (display (retornarCartas 4 deck))|#
   (display "\n")
   (recorrerDeck deck))
         
@@ -89,20 +93,20 @@
 
 
 ;;Funcion Recorrer Deck Para saber si quieren cartas
-(define (recorrerDeck deck)
-  (auxRecorrerDeck 1 (random (- (lenList (car (cddddr deck))) 1)) deck))
+(define (recorrerDeck deck funcion j)
+  (auxRecorrerDeck j (random (- (lenList (car (cddddr deck))) 1)) deck funcion))
 
         
 ;;Funcion auxiliar Recorrer Deck Para saber si quieren cartas
-(define (auxRecorrerDeck jugador randomC deck)
+(define (auxRecorrerDeck jugador randomC deck funcion)
   (cond ((null? (cdddr deck)) "Ya no hay cartas")
-        ((= jugador 1) (if (equal? (soliCarta 1 deck) "si")
+        ((= jugador 1) (if (equal? funcion "Solicitar Carta")
                            (if (list? (car (PedirCarta 1 randomC deck)))
-                               (auxRecorrerDeck 1 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 1 randomC deck))
-                               (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 1)) (cons (PedirCarta 1 randomC deck) (cdr deck))))
-                           (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 1)) deck)))
+                               (PedirCarta 1 randomC deck)
+                               (cons (PedirCarta 1 randomC deck) (cdr deck)))
+                           (deck)))
         
-        ((= jugador 2) (if (equal? (soliCarta 2 deck) "si")
+        #|((= jugador 2) (if (equal? (soliCarta 2 deck) "si")
                            (if (list? (cadr (PedirCarta 2 randomC deck)))
                                (auxRecorrerDeck 2 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 2 randomC deck))
                                (auxRecorrerDeck 3 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(PedirCarta 2 randomC deck)) (cddr deck))))
@@ -118,7 +122,7 @@
                            (if (list? (caddr (PedirCarta 4 randomC deck)))
                                (auxRecorrerDeck 4 (random (- (lenList (car (cddddr deck))) 2)) (PedirCarta 4 randomC deck))
                                (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) (append (list(car deck)) (list(cadr deck)) (list(caddr deck)) (list(PedirCarta 4 randomC deck)) (cddddr deck))))
-                           (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) deck)))
+                           (auxRecorrerDeck 5 (random (- (lenList (car (cddddr deck))) 1)) deck)))|#
         
         (else deck)))
         
@@ -199,22 +203,21 @@
 
 
 ;;Funcion Para realizar una comparacion entre el Deck del GUI con Deck de la logica
-(define (comparacion carta)
-  (auxComparacion carta 0 Deck))
+(define (comparacion carta deckGUI)
+  (auxComparacion carta 0 Deck deckGUI))
 
 
 ;;Funcion auxiliar para realizar una comparacion
-(define (auxComparacion carta cont deck)
-  (cond ((null? deck) "Carta no encontrada")
-        ((equal? carta (car deck)) (deckGUI cont (make-deck)))
-        (else (auxComparacion carta (+ 1 cont) (cdr deck)))))
+(define (auxComparacion carta cont deck deckGUI)
+  (cond ((null? deck) '())
+        ((equal? carta (car deck)) (FuncionDeckGUI cont deckGUI))
+        (else (auxComparacion carta (+ 1 cont) (cdr deck) deckGUI))))
 
 
 ;;Funcion que grafica la carta del deck
-(define (deckGUI carta deck)
-  (cond ((= carta 0) 
-         (car deck))
-        (else (deckGUI (- carta 1) (cdr deck)))))
+(define (FuncionDeckGUI carta deckGUI)
+  (cond ((= carta 0) (car deckGUI))
+        (else (FuncionDeckGUI (- carta 1) (cdr deckGUI)))))
 
 
 ;;Funcion que verifica que la suma sea 21 o menor
@@ -255,24 +258,24 @@
 
 
 ;;Funcion retorna las Cartas
-(define (retornarCartas Jugador deck)
+(define (retornarCartas Jugador deck deckGUI)
   (cond ((null? deck) "Ya no hay cartas")
-        ((= Jugador 1) (graficarCartas (car deck)))
-        ((and (= Jugador 2) (not (null? (cadr deck)))) (graficarCartas (cadr deck)))
-        ((and (= Jugador 3) (not (null? (caddr deck)))) (graficarCartas (caddr deck)))
-        ((and (= Jugador 4) (not (null? (cadddr deck)))) (graficarCartas (cadddr deck)))
+        ((= Jugador 1) (graficarCartas (car deck) deckGUI))
+        ((and (= Jugador 2) (not (null? (cadr deck)))) (graficarCartas (cadr deck) deckGUI))
+        ((and (= Jugador 3) (not (null? (caddr deck)))) (graficarCartas (caddr deck) deckGUI))
+        ((and (= Jugador 4) (not (null? (cadddr deck)))) (graficarCartas (cadddr deck) deckGUI))
         (else '())))
 
 
 ;;Funcion graficar las Cartas
-(define (graficarCartas lista)
+(define (graficarCartas lista deckGUI)
   (cond ((null? lista) '())
-        (else (append (list (comparacion (car lista))) (graficarCartas (cdr lista))))))
+        (else (append (list (comparacion (car lista) deckGUI)) (graficarCartas (cdr lista) deckGUI)))))
   
 
 ;(verificar21 '(10h 02s))
 ;(string->number (substring (symbol->string  '9h) 0 1))
 ;(comparacion 'Ac)
 ;(PedirCarta 1 (bCEj  '("J" "K" "L")))
-(bCEj '("J"))
+;(bCEj '("J" "k"))
 
