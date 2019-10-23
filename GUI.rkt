@@ -1,6 +1,6 @@
 #lang racket
 
-(require games/cards racket/gui racket/class "Logica.rkt")
+;(require games/cards racket/gui racket/class "Logica.rkt")
 (require games/cards racket/gui racket/class)
 
 
@@ -84,14 +84,14 @@
 (send table add-cards-to-region deck deck-region)
 ;(send table move-cards-to-region (deal 2) player1-region)
 
-;
-;(define (deal n)
-;                 (let deal ([n n])
-;                   (if (zero? n)
-;                     null
-;                     (let ([c (car deck)])
-;                       (set! deck (cdr deck))
-;                       (cons c (deal (sub1 n)))))))
+
+(define (deal n)
+                 (let deal ([n n])
+                   (if (zero? n)
+                     null
+                     (let ([c (car deck)])
+                       (set! deck (cdr deck))
+                       (cons c (deal (sub1 n)))))))
 
 ;(define play1
 ;  (send table move-cards-to-region (deal 6) player1-region)
@@ -108,7 +108,7 @@
 
 (define (main)
   (
-   (send table move-cards-to-region (retornarCartas 1 deck) crupier-region)
+   (send table move-cards-to-region (deal 2) crupier-region)
    (send table move-cards-to-region (deal 2) player1-region)
    (send table move-cards-to-region (deal 2) player2-region)
    (send table move-cards-to-region (deal 2) player3-region)
