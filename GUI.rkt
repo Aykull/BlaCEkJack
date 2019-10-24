@@ -107,18 +107,8 @@
 (define j3 (make-buttonJ3 "Jugador 3" ))
 ;;;
 (define  (make-buttonW title pos)
-  (make-button-region 30 (+ 50 pos) BUTTON-WIDTH BUTTON-HEIGHT title void ))
+  (make-button-region 10 (+ 30 pos) 250 40 title void ))
 ;;;
-(define wj1 (make-buttonW "Jugador 1" 1))
-(define wj2 (make-buttonW "Jugador 2" 60))
-(define wj3 (make-buttonW "Jugador 3" 120))
-(define crupi (make-buttonW "Crupier" 180))
-;;;
-(send winner add-region wj1)
-(send winner add-region wj2)
-(send winner add-region wj3)
-(send winner add-region crupi)
-
 (define (solicitar_Carta)
   (auxS_C1 (recorrerDeck 1 deck "Solicitar Carta")))
 (define (auxS_C1 lista)
@@ -145,7 +135,7 @@
   (cond ((equal? lista #f) "Segundo jugador")
         (else (set! deck lista)
               (set! p3 (retornarCartas 3 deck deckGUI))
-              (send table stack-cards p3)
+              (if (equal? (send table stack-cards p3) '()) '() (send table stack-cards p3))
               (send table move-cards-to-region p3 player3-region)
               (send table cards-face-up p3))))
 
@@ -175,11 +165,27 @@
 (set-region-callback! hit-button3 solicitar_Carta3)
 
 (define (plantarse3)
+  
   (send table remove-region hit-button3)
   (send table remove-region stand-button3)
-  ;funcion con la logica para que juegue el crupier
+  (set! deck (recorrerDeck 4 deck "Solicitar Carta"))
+  (set! d (retornarCartas 4 deck deckGUI))
   (send winner show #t)
   )
+
+;;Funcion que muestra los resultados
+(define resultadosFinales (resultados deck))
+;;;
+(define wj1 (make-buttonW (car resultadosFinales) 1))
+(define wj2 (make-buttonW (cadr resultadosFinales) 60))
+(define wj3 (make-buttonW (caddr resultadosFinales) 120))
+(define crupi (make-buttonW (cadddr resultadosFinales) 180))
+;;;
+(send winner add-region wj1)
+(send winner add-region wj2)
+(send winner add-region wj3)
+(send winner add-region crupi)
+
 
 (set-region-callback! stand-button3 plantarse3)
   

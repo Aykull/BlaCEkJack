@@ -178,21 +178,21 @@
                            (append (car (cddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))))
     
         ((= Jugador 4) (if (equal? (verificar21 (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))) 4) #t) 
-                           (append (list (car deck) (cadr deck) (caddr deck))
-                                   (list (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
-                                   (list (modificarDeck2 numRandom 0 (car (cddddr deck)))))
+                           (recorrerDeck 4 (append (list (car deck) (cadr deck) (caddr deck))
+                                                   (list (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0))))
+                                                   (list (modificarDeck2 numRandom 0 (car (cddddr deck))))) "Solicitar Carta")
                            (append (car (cdddr deck)) (list (cartasAleatorias (car (cddddr deck)) numRandom 0)))))
         (else "Error")))
 
 
 ;;Funcion Para realizar una comparacion entre el Deck del GUI con Deck de la logica
-(define (comparacion carta deckGUI)
+(define (comparacion carta deckR deckGUI)
   (auxComparacion carta 0 Deck deckGUI))
 
 
 ;;Funcion auxiliar para realizar una comparacion
 (define (auxComparacion carta cont deck deckGUI)
-  (cond ((null? deck) "Carta no encontrada")
+  (cond ((null? deck) '())
         ((equal? carta (car deck)) (FuncionDeckGUI cont deckGUI))
         (else (auxComparacion carta (+ 1 cont) (cdr deck) deckGUI))))
 
@@ -228,32 +228,40 @@
         ((> suma 21) "Fail")
         (else #t)))
 
-
-;;Funcion plantarse
-(define (plantarse J deck)
-  (cond ((> J 5) (mostrarResultados deck))
-        ((= J 1)("Siga con el J2"))))
-
-
 ;;Funcion que muestra los resultados
-(define (mostrarResultados deck)
-  (car deck))
+(define (resultados deck)
+  (list (string-append "Jugador 1 con un total de puntos de: " (number->string(auxResultados (car deck)))) (string-append "Jugador 2 con un total de puntos de: " (number->string(auxResultados (cadr deck))))
+        (string-append "Jugador 3 con un total de puntos de: " (number->string(auxResultados (caddr deck)))) (string-append "Crupier con un total de puntos de: " (number->string(auxResultados (cadddr deck))))))
+
+;;Axiliar resultados
+(define (auxResultados listaJugador)
+  (cond ((null? listaJugador) 0)
+        ;;Compara si la carta es un A para sumar 1 o 11
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "A") (+ 11(auxResultados (cdr listaJugador))))
+        ;;Compara si la carta es un K para sumar 10
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "K") (+ 10 (auxResultados (cdr listaJugador))))
+        ;;Compara si la carta es un Q para sumar 10
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "Q") (+ 10 (auxResultados (cdr listaJugador))))
+        ;;Compara si la carta es un J para sumar 10
+        ((equal? (substring (symbol->string  (car listaJugador)) 0 1) "J") (+ 10 (auxResultados (cdr listaJugador))))
+        (else (+ (string->number (substring (symbol->string  (car listaJugador)) 0 2)) (auxResultados (cdr listaJugador))))))
+
 
 
 ;;Funcion retorna las Cartas
 (define (retornarCartas Jugador deck deckGUI)
   (cond ((null? deck) "Ya no hay cartas")
-        ((= Jugador 1) (graficarCartas (car deck) deckGUI))
-        ((and (= Jugador 2) (not (null? (cadr deck)))) (graficarCartas (cadr deck) deckGUI))
-        ((and (= Jugador 3) (not (null? (caddr deck)))) (graficarCartas (caddr deck) deckGUI))
-        ((and (= Jugador 4) (not (null? (cadddr deck)))) (graficarCartas (cadddr deck) deckGUI))
+        ((= Jugador 1) (graficarCartas (car deck) (car(cddddr deck)) deckGUI))
+        ((and (= Jugador 2) (not (null? (cadr deck)))) (graficarCartas (cadr deck) (car(cddddr deck)) deckGUI))
+        ((and (= Jugador 3) (not (null? (caddr deck)))) (graficarCartas (caddr deck) (car(cddddr deck)) deckGUI))
+        ((and (= Jugador 4) (not (null? (cadddr deck)))) (graficarCartas (cadddr deck) (car(cddddr deck)) deckGUI))
         (else '())))
 
 
 ;;Funcion graficar las Cartas
-(define (graficarCartas lista deckGUI)
+(define (graficarCartas lista deckR deckGUI)
   (cond ((null? lista) '())
-        (else (append (list (comparacion (car lista) deckGUI)) (graficarCartas (cdr lista) deckGUI)))))
+        (else (append (list (comparacion (car lista) deckR deckGUI)) (graficarCartas (cdr lista) deckR deckGUI)))))
   
 
 ;(verificar21 '(10h 02s))
